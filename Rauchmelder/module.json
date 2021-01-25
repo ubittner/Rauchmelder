@@ -1,0 +1,14 @@
+{
+  "id": "{0E9BE7EE-89B9-7034-9370-395E17740379}",
+  "name": "Rauchmelder",
+  "type": 3,
+  "vendor": "Ulrich Bittner",
+  "aliases": [
+    "Rauchmelder"
+  ],
+  "url": "https://github.com/ubittner/Rauchmelder",
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "RM"
+}

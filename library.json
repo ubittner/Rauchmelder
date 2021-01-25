@@ -1,0 +1,12 @@
+{
+    "id": "{469B1F10-4F15-90FE-C13E-7C7451B904C3}",
+    "author": "Ulrich Bittner",
+    "name": "Rauchmelder",
+    "url": "https://github.com/ubittner/Rauchmelder",
+    "compatibility": {
+        "version": "5.5"
+    },
+    "version": "1.00",
+    "build": 1,
+    "date": 1611561705
+}
