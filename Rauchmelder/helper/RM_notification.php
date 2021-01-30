@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection DuplicatedCode */
+
 declare(strict_types=1);
 
 trait RM_notification
@@ -126,11 +128,11 @@ trait RM_notification
                         $location = $this->ReadPropertyString('LocationDesignation');
                         if (!$actualState) {
                             $unicode = json_decode('"\u2705"'); # white_check_mark
-                            $message = $timestamp . "\n" . $unicode . " OK\n" . $location;
+                            $message = $location . "\n" . $unicode . " OK\n" . $timestamp;
                             $sound = '';
                         } else {
                             $unicode = json_decode('"\ud83d\udd25"'); # flame
-                            $message = $timestamp . "\n" . $unicode . " Rauch erkannt\n" . $location . "\n" . $this->GetValue('AlertingSensor');
+                            $message = $location . "\n" . $unicode . " Rauch erkannt\n" . $this->GetValue('AlertingSensor') . "\n" . $timestamp;
                             $sound = 'alarm';
                         }
                         $result = @WFC_PushNotification($id, 'Rauchmelder', "\n" . $message, $sound, 0);
