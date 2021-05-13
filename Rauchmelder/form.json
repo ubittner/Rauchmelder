@@ -15,6 +15,11 @@
         },
         {
           "type": "CheckBox",
+          "name": "EnableLocationDesignation",
+          "caption": "Standort"
+        },
+        {
+          "type": "CheckBox",
           "name": "EnableSensorList",
           "caption": "Rauchmelder"
         },
@@ -26,7 +31,7 @@
         {
           "type": "CheckBox",
           "name": "EnableAlertingSensor",
-          "caption": "Ausgelöster Melder"
+          "caption": "Auslösender Melder"
         }
       ]
     },
@@ -63,49 +68,44 @@
               }
             },
             {
+              "name": "ActualStatus",
+              "caption": "Aktueller Status",
+              "width": "150px",
+              "add": ""
+            },
+            {
               "caption": "Bezeichnung",
               "name": "Name",
               "width": "350px",
-              "add": "",
+              "add": "Rauchmelder",
               "edit": {
                 "type": "ValidationTextBox"
               }
             },
             {
-              "caption": "Variable",
+              "caption": "Auslösende Variable",
               "name": "ID",
-              "width": "350px",
+              "width": "auto",
               "add": 0,
+              "onClick": "RM_EnableTriggerVariableConfigurationButton($id, $SmokeDetectors['ID']);",
               "edit": {
                 "type": "SelectVariable"
               }
             },
             {
-              "caption": "Auslöser",
-              "name": "Trigger",
-              "width": "250px",
-              "add": 2,
+              "caption": "Info",
+              "name": "Info",
+              "width": "160px",
+              "add": "",
+              "visible": false,
               "edit": {
-                "type": "Select",
-                "options": [
-                  {
-                    "caption": "Bei Grenzunterschreitung",
-                    "value": 0
-                  },
-                  {
-                    "caption": "Bei Grenzunterschreitung",
-                    "value": 1
-                  },
-                  {
-                    "caption": "Bei bestimmtem Wert",
-                    "value": 2
-                  }
-                ]
+                "type": "Button",
+                "onClick": "RM_ShowVariableDetails($id, $ID);"
               }
             },
             {
-              "caption": "Auslösender Wert",
-              "name": "Value",
+              "caption": "Auslösewert",
+              "name": "TriggerValue",
               "width": "140px",
               "add": "true",
               "edit": {
@@ -113,6 +113,14 @@
               }
             }
           ]
+        },
+        {
+          "type": "OpenObjectButton",
+          "caption": "Bearbeiten",
+          "name": "TriggerVariableConfigurationButton",
+          "enabled": false,
+          "visible": false,
+          "objectID": 0
         }
       ]
     },
@@ -122,7 +130,7 @@
       "items": [
         {
           "type": "CheckBox",
-          "name": "UseStateChangedNotification",
+          "name": "UseNotification",
           "caption": "Sofortige Benachrichtigung bei Statusänderung"
         },
         {
@@ -130,7 +138,21 @@
           "items": [
             {
               "type": "CheckBox",
-              "name": "UseStateChangedOK",
+              "name": "UseStateSmokeDetected",
+              "caption": "\ud83d\udd25"
+            },
+            {
+              "type": "Label",
+              "caption": "Rauch erkannt"
+            }
+          ]
+        },
+        {
+          "type": "RowLayout",
+          "items": [
+            {
+              "type": "CheckBox",
+              "name": "UseStateOK",
               "caption": "\u2705"
             },
             {
@@ -140,54 +162,13 @@
           ]
         },
         {
-          "type": "RowLayout",
-          "items": [
-            {
-              "type": "CheckBox",
-              "name": "UseStateChangedSmokeDetected",
-              "caption": "\ud83d\udd25"
-            },
-            {
-              "type": "Label",
-              "caption": "Rauch erkannt"
-            }
-          ]
-        },{
           "type": "Label",
           "caption": " "
         },
         {
           "type": "CheckBox",
           "name": "UseDailyNotification",
-          "caption": "Tägliche Benachrichtigung über den aktuellen Status"
-        },
-        {
-          "type": "RowLayout",
-          "items": [
-            {
-              "type": "CheckBox",
-              "name": "UseDailyNotificationOK",
-              "caption": "\u2705"
-            },
-            {
-              "type": "Label",
-              "caption": "OK"
-            }
-          ]
-        },
-        {
-          "type": "RowLayout",
-          "items": [
-            {
-              "type": "CheckBox",
-              "name": "UseDailyNotificationSmokeDetected",
-              "caption": "\ud83d\udd25"
-            },
-            {
-              "type": "Label",
-              "caption": "Rauch erkannt"
-            }
-          ]
+          "caption": "Tagesbericht über den aktuellen Status"
         },
         {
           "type": "SelectTime",
@@ -197,141 +178,6 @@
         {
           "type": "Label",
           "caption": " "
-        },
-        {
-          "type": "List",
-          "name": "WebFrontNotification",
-          "caption": "WebFront",
-          "rowCount": 5,
-          "add": true,
-          "delete": true,
-          "columns": [
-            {
-              "caption": "Aktiviert",
-              "name": "Use",
-              "width": "100px",
-              "add": true,
-              "edit": {
-                "type": "CheckBox"
-              }
-            },
-            {
-              "caption": "WebFront",
-              "name": "ID",
-              "add": 0,
-              "width": "100px",
-              "edit": {
-                "type": "SelectModule",
-                "moduleID": "{3565B1F2-8F7B-4311-A4B6-1BF1D868F39E}"
-              }
-            },
-            {
-              "caption": "Name",
-              "name": "Name",
-              "add": "",
-              "width": "200px"
-            },
-            {
-              "caption": "Anzeigedauer",
-              "name": "DisplayDuration",
-              "add": 0,
-              "width": "100px",
-              "edit": {
-                "type": "NumberSpinner",
-                "suffix": " Sekunden",
-                "minimum": 0
-              }
-
-            }
-          ]
-        },
-        {
-          "type": "List",
-          "name": "MobileDeviceNotification",
-          "caption": "Mobile Geräte",
-          "rowCount": 5,
-          "add": true,
-          "delete": true,
-          "columns": [
-            {
-              "caption": "Aktiviert",
-              "name": "Use",
-              "width": "100px",
-              "add": true,
-              "edit": {
-                "type": "CheckBox"
-              }
-            },
-            {
-              "caption": "WebFront",
-              "name": "ID",
-              "add": 0,
-              "width": "100px",
-              "edit": {
-                "type": "SelectModule",
-                "moduleID": "{3565B1F2-8F7B-4311-A4B6-1BF1D868F39E}"
-              }
-            },
-            {
-              "caption": "Name",
-              "name": "Name",
-              "add": "",
-              "width": "300px"
-            }
-          ]
-        },
-        {
-          "type": "List",
-          "name": "MailNotification",
-          "caption": "E-Mail",
-          "rowCount": 5,
-          "add": true,
-          "delete": true,
-          "columns": [
-            {
-              "caption": "Aktiviert",
-              "name": "Use",
-              "width": "100px",
-              "add": true,
-              "edit": {
-                "type": "CheckBox"
-              }
-            },
-            {
-              "caption": "SMTP",
-              "name": "ID",
-              "add": 0,
-              "width": "100px",
-              "edit": {
-                "type": "SelectModule",
-                "moduleID": "{375EAF21-35EF-4BC4-83B3-C780FD8BD88A}"
-              }
-            },
-            {
-              "caption": "Name",
-              "name": "Name",
-              "add": "",
-              "width": "300px"
-            },
-            {
-              "caption": "Name des Empfängers",
-              "name": "Recipient",
-              "width": "200px",
-              "add": "",
-              "edit": {
-                "type": "ValidationTextBox"
-              }
-            },
-            {
-              "caption": "E-Mail Adresse",
-              "name": "Address",
-              "width": "350px",
-              "add": "@",
-              "edit": {
-                "type": "ValidationTextBox"
-              }
-            }
-          ]
         }
       ]
     }
@@ -418,7 +264,7 @@
             {
               "caption": "Sender Name",
               "name": "SenderName",
-              "width": "450px"
+              "width": "auto"
             },
             {
               "caption": "Nachrichten ID",
@@ -436,12 +282,12 @@
     },
     {
       "type": "ExpansionPanel",
-      "caption": "Entwicklerbereich",
+      "caption": "Tagesbericht",
       "items": [
         {
           "type": "Button",
-          "caption": "Tägliche Benachrichtigung versenden",
-          "onClick": "$result = RM_Notify($id, true); if ($result) {echo 'Die Benachrichtigungen wurden versendet!';} else {echo 'Es ist ein Fehler aufgetreten!';}"
+          "caption": "Tagesbericht versenden",
+          "onClick": "RM_SendDailyNotification($id); echo 'Die Benachrichtigungen wurden versendet!';"
         }
       ]
     }

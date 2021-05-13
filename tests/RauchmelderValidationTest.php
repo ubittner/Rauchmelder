@@ -6,12 +6,12 @@ include_once __DIR__ . '/stubs/Validator.php';
 
 class RauchmelderValidationTest extends TestCaseSymconValidation
 {
-    public function testValidateRauchmelder(): void
+    public function testValidateLibrary_Rauchmelder(): void
     {
         $this->validateLibrary(__DIR__ . '/..');
     }
 
-    public function testValidateRauchmelderModule(): void
+    public function testValidateModule_Rauchmelder(): void
     {
         $this->validateModule(__DIR__ . '/../Rauchmelder');
     }

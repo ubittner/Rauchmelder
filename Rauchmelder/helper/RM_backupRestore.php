@@ -1,20 +1,22 @@
 <?php
 
+/*
+ * @author      Ulrich Bittner
+ * @copyright   (c) 2021
+ * @license     CC BY-NC-SA 4.0
+ * @see         https://github.com/ubittner/Rauchmelder/tree/main/Rauchmelder
+ */
+
 /** @noinspection PhpUnused */
 
 declare(strict_types=1);
 
 trait RM_backupRestore
 {
-    #################### Backup
-
-    /**
-     * Creates a backup of the actual configuration into a script.
-     *
-     * @param int $BackupCategory
-     */
     public function CreateBackup(int $BackupCategory): void
     {
+        $this->SendDebug(__FUNCTION__, 'Die Methode wird ausgeführt.', 0);
+
         if (IPS_GetInstance($this->InstanceID)['InstanceStatus'] == 102) {
             $name = 'Konfiguration (' . IPS_GetName($this->InstanceID) . ' #' . $this->InstanceID . ') ' . date('d.m.Y H:i:s');
             $config = IPS_GetConfiguration($this->InstanceID);
@@ -28,15 +30,10 @@ trait RM_backupRestore
         }
     }
 
-    #################### Restore
-
-    /**
-     * Restores a configuration form selected script.
-     *
-     * @param int $ConfigurationScript
-     */
     public function RestoreConfiguration(int $ConfigurationScript): void
     {
+        $this->SendDebug(__FUNCTION__, 'Die Methode wird ausgeführt.', 0);
+
         if ($ConfigurationScript != 0 && IPS_ObjectExists($ConfigurationScript)) {
             $object = IPS_GetObject($ConfigurationScript);
             if ($object['ObjectType'] == 3) {
