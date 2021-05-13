@@ -113,7 +113,7 @@ trait RM_notification
         if ($id == 0 || @!IPS_ObjectExists($id)) {
             return;
         }
-        //@NM_SendMessage($id, $Text);
+        //@NMSMS_SendMessage($id, $Text);
         $scriptText = 'NMSMS_SendMessage(' . $id . ', "' . $Text . '");';
         IPS_RunScriptText($scriptText);
     }
@@ -127,7 +127,7 @@ trait RM_notification
         if ($id == 0 || @!IPS_ObjectExists($id)) {
             return;
         }
-        //@SG_SendMessage($id, $Text);
+        //@SGSMS_SendMessage($id, $Text);
         $scriptText = 'SGSMS_SendMessage(' . $id . ', "' . $Text . '");';
         IPS_RunScriptText($scriptText);
     }
