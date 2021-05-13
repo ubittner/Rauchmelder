@@ -114,7 +114,7 @@ trait RM_notification
             return;
         }
         //@NM_SendMessage($id, $Text);
-        $scriptText = 'NM_SendMessage(' . $id . ', "' . $Text . '");';
+        $scriptText = 'NMSMS_SendMessage(' . $id . ', "' . $Text . '");';
         IPS_RunScriptText($scriptText);
     }
 
@@ -128,7 +128,7 @@ trait RM_notification
             return;
         }
         //@SG_SendMessage($id, $Text);
-        $scriptText = 'SG_SendMessage(' . $id . ', "' . $Text . '");';
+        $scriptText = 'SGSMS_SendMessage(' . $id . ', "' . $Text . '");';
         IPS_RunScriptText($scriptText);
     }
 
