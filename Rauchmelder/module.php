@@ -255,7 +255,7 @@ class Rauchmelder extends IPSModule
                 ],
                 $formData['elements'][3]['items'][7]['items'][2] = [
                     'type'     => 'OpenObjectButton',
-                    'caption'  => 'Konfigurieren',
+                    'caption'  => 'ID ' . $id . ' konfigurieren',
                     'visible'  => $visibility,
                     'objectID' => $id
                 ],
@@ -298,7 +298,7 @@ class Rauchmelder extends IPSModule
                 ],
                 $formData['elements'][3]['items'][8]['items'][2] = [
                     'type'     => 'OpenObjectButton',
-                    'caption'  => 'Konfigurieren',
+                    'caption'  => 'ID ' . $id . ' konfigurieren',
                     'visible'  => $visibility,
                     'objectID' => $id
                 ]
@@ -326,7 +326,7 @@ class Rauchmelder extends IPSModule
                 ],
                 $formData['elements'][3]['items'][9]['items'][2] = [
                     'type'     => 'OpenObjectButton',
-                    'caption'  => 'Konfigurieren',
+                    'caption'  => 'ID ' . $id . ' konfigurieren',
                     'visible'  => $visibility,
                     'objectID' => $id
                 ],
@@ -354,7 +354,7 @@ class Rauchmelder extends IPSModule
                 ],
                 $formData['elements'][3]['items'][10]['items'][2] = [
                     'type'     => 'OpenObjectButton',
-                    'caption'  => 'Konfigurieren',
+                    'caption'  => 'ID ' . $id . ' konfigurieren',
                     'visible'  => $visibility,
                     'objectID' => $id
                 ],
@@ -382,7 +382,7 @@ class Rauchmelder extends IPSModule
                 ],
                 $formData['elements'][3]['items'][11]['items'][2] = [
                     'type'     => 'OpenObjectButton',
-                    'caption'  => 'Konfigurieren',
+                    'caption'  => 'ID ' . $id . ' konfigurieren',
                     'visible'  => $visibility,
                     'objectID' => $id
                 ],
@@ -410,7 +410,7 @@ class Rauchmelder extends IPSModule
                 ],
                 $formData['elements'][3]['items'][12]['items'][2] = [
                     'type'     => 'OpenObjectButton',
-                    'caption'  => 'Konfigurieren',
+                    'caption'  => 'ID ' . $id . ' konfigurieren',
                     'visible'  => $visibility,
                     'objectID' => $id
                 ],
