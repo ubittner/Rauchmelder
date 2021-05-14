@@ -291,32 +291,5 @@
         }
       ]
     }
-  ],
-  "status": [
-    {
-      "code": 101,
-      "icon": "active",
-      "caption": "Rauchmelder wird erstellt"
-    },
-    {
-      "code": 102,
-      "icon": "active",
-      "caption": "Rauchmelder ist aktiv"
-    },
-    {
-      "code": 103,
-      "icon": "active",
-      "caption": "Rauchmelder wird gelöscht"
-    },
-    {
-      "code": 104,
-      "icon": "inactive",
-      "caption": "Rauchmelder ist inaktiv"
-    },
-    {
-      "code": 200,
-      "icon": "inactive",
-      "caption": "Es ist Fehler aufgetreten, weitere Informationen unter Meldungen, im Log oder Debug!"
-    }
   ]
 }
