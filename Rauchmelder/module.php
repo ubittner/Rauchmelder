@@ -118,13 +118,44 @@ class Rauchmelder extends IPSModule
         IPS_SetHidden($this->GetIDForIdent('AlertingSensor'), !$this->ReadPropertyBoolean('EnableAlertingSensor'));
         $this->SetValue('Location', $this->ReadPropertyString('LocationDesignation'));
 
+        // Delete all references
+        foreach ($this->GetReferenceList() as $referenceID) {
+            $this->UnregisterReference($referenceID);
+        }
+
+        // Delete all registrations
+        foreach ($this->GetMessageList() as $senderID => $messages) {
+            foreach ($messages as $message) {
+                if ($message == VM_UPDATE) {
+                    $this->UnregisterMessage($senderID, VM_UPDATE);
+                }
+            }
+        }
+
         // Validation
         if (!$this->ValidateConfiguration()) {
             $this->SetTimerInterval('DailyNotification', 0);
             return;
         }
 
-        $this->RegisterMessages();
+        // Register references and update messages
+        $variables = json_decode($this->ReadPropertyString('SmokeDetectors'));
+        foreach ($variables as $variable) {
+            if ($variable->Use) {
+                if ($variable->ID != 0 && @IPS_ObjectExists($variable->ID)) {
+                    $this->RegisterReference($variable->ID);
+                    $this->RegisterMessage($variable->ID, VM_UPDATE);
+                }
+            }
+        }
+        $properties = ['WebFrontNotification', 'WebFrontPushNotification', 'Mailer', 'NeXXtMobile', 'Sipgate', 'Telegram'];
+        foreach ($properties as $property) {
+            $id = $this->ReadPropertyInteger($property);
+            if ($id != 0 && @IPS_ObjectExists($id)) {
+                $this->RegisterReference($id);
+            }
+        }
+
         $this->UpdateState();
         $this->SetDailyNotificationTimer();
     }
@@ -566,32 +597,6 @@ class Rauchmelder extends IPSModule
     private function KernelReady(): void
     {
         $this->ApplyChanges();
-    }
-
-    private function RegisterMessages(): void
-    {
-        // Unregister
-        $messages = $this->GetMessageList();
-        if (!empty($messages)) {
-            foreach ($messages as $id => $message) {
-                foreach ($message as $messageType) {
-                    if ($messageType == VM_UPDATE) {
-                        $this->UnregisterMessage($id, VM_UPDATE);
-                    }
-                }
-            }
-        }
-        // Register
-        $smokeDetectors = json_decode($this->ReadPropertyString('SmokeDetectors'));
-        if (!empty($smokeDetectors)) {
-            foreach ($smokeDetectors as $smokeDetector) {
-                if ($smokeDetector->Use) {
-                    if ($smokeDetector->ID != 0 && @IPS_ObjectExists($smokeDetector->ID)) {
-                        $this->RegisterMessage($smokeDetector->ID, VM_UPDATE);
-                    }
-                }
-            }
-        }
     }
 
     private function ValidateConfiguration(): bool
