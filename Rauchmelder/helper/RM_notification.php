@@ -28,16 +28,16 @@ trait RM_notification
         $timestamp = (string) date('d.m.Y, H:i:s');
         $unicode = json_decode('"\u2705"'); # white_check_mark
         $actualState = $this->GetValue('State');
-        $statusDescription = ' OK';
+        $statusDescription = 'OK';
         if ($actualState) {
             $unicode = json_decode('"\ud83d\udd25"'); # flame
-            $statusDescription = ' Rauch erkannt';
+            $statusDescription = 'Rauch erkannt';
         }
         // WebFront Notification
-        $text = $timestamp . "\n" . $unicode . $statusDescription;
+        $text = $location . "\n" . $unicode . ' ' . $statusDescription . "\n" . $timestamp;
         $this->SendWebFrontNotification($title, $text, '');
         // WebFront Push Notification
-        $text = $timestamp . "\n" . $unicode . $statusDescription;
+        $text = "\n" . $location . "\n" . $unicode . ' ' . $statusDescription . "\n" . $timestamp;
         $this->SendWebFrontPushNotification($title, $text, 'alarm');
         // Mail
         $subject = 'Rauchmelder ' . $location . ' - ' . $unicode . $statusDescription;
@@ -55,6 +55,7 @@ trait RM_notification
         $text = $title . "\n" . $location . "\n" . $statusDescription . "\n" . $timestamp;
         $this->SendNeXXtMobileSMS($text);
         // Sipgate SMS
+        $text = $title . "\n" . $location . "\n" . $unicode . ' ' . $statusDescription . "\n" . $timestamp;
         $this->SendSipgateSMS($text);
         // Telegram Message
         $this->SendTelegramMessage($text);
