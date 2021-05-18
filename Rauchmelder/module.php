@@ -27,6 +27,7 @@ class Rauchmelder extends IPSModule
     private const NEXXTMOBILE_SMS_MODULE_GUID = '{7E6DBE40-4438-ABB7-7EE0-93BC4F1AF0CE}';
     private const SIPGATE_SMS_MODULE_GUID = '{965ABB3F-B4EE-7F9F-1E5E-ED386219EF7C}';
     private const TELEGRAM_BOT_MODULE_GUID = '{32464EBD-4CCC-6174-4031-5AA374F7CD8D}';
+    private const HOMEMATIC_DEVICE_GUID = '{EE4A81C6-5C90-4DB7-AD2F-F6BBD521412E}';
 
     public function Create()
     {
@@ -36,6 +37,7 @@ class Rauchmelder extends IPSModule
         // Properties
         // Functions
         $this->RegisterPropertyBoolean('MaintenanceMode', false);
+        $this->RegisterPropertyBoolean('EnableSmokeDetection', true);
         $this->RegisterPropertyBoolean('EnableLocationDesignation', true);
         $this->RegisterPropertyBoolean('EnableSensorList', true);
         $this->RegisterPropertyBoolean('EnableState', true);
@@ -65,15 +67,22 @@ class Rauchmelder extends IPSModule
         $this->RegisterPropertyInteger('Telegram', 0);
 
         // Variables
+        // Smoke detection
+        $id = @$this->GetIDForIdent('SmokeDetection');
+        $this->RegisterVariableBoolean('SmokeDetection', 'Rauchmelder', '~Switch', 10);
+        $this->EnableAction('SmokeDetection');
+        if ($id == false) {
+            $this->SetValue('SmokeDetection', true);
+        }
         // Location
         $id = @$this->GetIDForIdent('Location');
-        $this->RegisterVariableString('Location', 'Standort', '', 10);
+        $this->RegisterVariableString('Location', 'Standort', '', 20);
         if ($id == false) {
             IPS_SetIcon($this->GetIDForIdent('Location'), 'IPS');
         }
         // Sensor list
         $id = @$this->GetIDForIdent('SensorList');
-        $this->RegisterVariableString('SensorList', 'Rauchmelder', 'HTMLBox', 20);
+        $this->RegisterVariableString('SensorList', 'Rauchmelder', 'HTMLBox', 30);
         if ($id == false) {
             IPS_SetIcon($this->GetIDForIdent('SensorList'), 'Flame');
         }
@@ -85,10 +94,10 @@ class Rauchmelder extends IPSModule
         IPS_SetVariableProfileIcon($profile, '');
         IPS_SetVariableProfileAssociation($profile, 0, 'OK', 'Ok', 0x00FF00);
         IPS_SetVariableProfileAssociation($profile, 1, 'Rauch erkannt', 'Warning', 0xFF0000);
-        $this->RegisterVariableBoolean('State', 'Status', $profile, 30);
+        $this->RegisterVariableBoolean('State', 'Status', $profile, 40);
         // Alerting sensor
         $id = @$this->GetIDForIdent('AlertingSensor');
-        $this->RegisterVariableString('AlertingSensor', 'Auslösender Melder', '', 40);
+        $this->RegisterVariableString('AlertingSensor', 'Auslösender Melder', '', 50);
         $this->SetValue('AlertingSensor', '');
         if ($id == false) {
             IPS_SetIcon($this->GetIDForIdent('AlertingSensor'), 'Warning');
@@ -112,6 +121,7 @@ class Rauchmelder extends IPSModule
         }
 
         // Options
+        IPS_SetHidden($this->GetIDForIdent('SmokeDetection'), !$this->ReadPropertyBoolean('EnableSmokeDetection'));
         IPS_SetHidden($this->GetIDForIdent('Location'), !$this->ReadPropertyBoolean('EnableLocationDesignation'));
         IPS_SetHidden($this->GetIDForIdent('SensorList'), !$this->ReadPropertyBoolean('EnableSensorList'));
         IPS_SetHidden($this->GetIDForIdent('State'), !$this->ReadPropertyBoolean('EnableState'));
@@ -200,6 +210,9 @@ class Rauchmelder extends IPSModule
                 //$Data[5] = timestamp last value
 
                 if ($this->CheckMaintenanceMode()) {
+                    return;
+                }
+                if (!$this->GetValue('SmokeDetection')) {
                     return;
                 }
 
@@ -589,6 +602,24 @@ class Rauchmelder extends IPSModule
                 echo "\nVariablenprofil:\n";
                 print_r($profile);
             }
+        }
+    }
+
+    #################### Request Action
+
+    public function RequestAction($Ident, $Value)
+    {
+        switch ($Ident) {
+            case 'SmokeDetection':
+                $this->SetValue($Ident, $Value);
+                if ($Value) {
+                    $sensors = json_decode($this->ReadPropertyString('SmokeDetectors'));
+                    foreach ($sensors as $sensor) {
+                        $this->CheckTriggerVariable($sensor->ID, true);
+                    }
+                }
+                break;
+
         }
     }
 

@@ -19,6 +19,9 @@ trait RM_notification
         if ($this->CheckMaintenanceMode()) {
             return;
         }
+        if (!$this->GetValue('SmokeDetection')) {
+            return;
+        }
         $this->UpdateState();
         if (!$this->ReadPropertyBoolean('UseDailyNotification')) {
             return;
@@ -68,6 +71,9 @@ trait RM_notification
         if ($this->CheckMaintenanceMode()) {
             return;
         }
+        if (!$this->GetValue('SmokeDetection')) {
+            return;
+        }
         $id = $this->ReadPropertyInteger('WebFrontNotification');
         if ($id == 0 || @!IPS_ObjectExists($id)) {
             return;
@@ -80,6 +86,9 @@ trait RM_notification
     protected function SendWebFrontPushNotification(string $Title, string $Text, string $Sound, int $TargetID = 0): void
     {
         if ($this->CheckMaintenanceMode()) {
+            return;
+        }
+        if (!$this->GetValue('SmokeDetection')) {
             return;
         }
         $id = $this->ReadPropertyInteger('WebFrontPushNotification');
@@ -96,6 +105,9 @@ trait RM_notification
         if ($this->CheckMaintenanceMode()) {
             return;
         }
+        if (!$this->GetValue('SmokeDetection')) {
+            return;
+        }
         $id = $this->ReadPropertyInteger('Mailer');
         if ($id == 0 || @!IPS_ObjectExists($id)) {
             return;
@@ -108,6 +120,9 @@ trait RM_notification
     protected function SendNeXXtMobileSMS(string $Text): void
     {
         if ($this->CheckMaintenanceMode()) {
+            return;
+        }
+        if (!$this->GetValue('SmokeDetection')) {
             return;
         }
         $id = $this->ReadPropertyInteger('NeXXtMobile');
@@ -124,6 +139,9 @@ trait RM_notification
         if ($this->CheckMaintenanceMode()) {
             return;
         }
+        if (!$this->GetValue('SmokeDetection')) {
+            return;
+        }
         $id = $this->ReadPropertyInteger('Sipgate');
         if ($id == 0 || @!IPS_ObjectExists($id)) {
             return;
@@ -136,6 +154,9 @@ trait RM_notification
     protected function SendTelegramMessage(string $Text): void
     {
         if ($this->CheckMaintenanceMode()) {
+            return;
+        }
+        if (!$this->GetValue('SmokeDetection')) {
             return;
         }
         $id = $this->ReadPropertyInteger('Telegram');

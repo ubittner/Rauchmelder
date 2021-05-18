@@ -13,31 +13,98 @@ declare(strict_types=1);
 
 trait RM_smokeDetector
 {
+    public function DetermineSmokeDetectors(): void
+    {
+        $instanceIDs = @IPS_GetInstanceListByModuleID(self::HOMEMATIC_DEVICE_GUID);
+        $variables = [];
+        foreach ($instanceIDs as $instanceID) {
+            $childrenIDs = @IPS_GetChildrenIDs($instanceID);
+            foreach ($childrenIDs as $childrenID) {
+                $object = @IPS_GetObject($childrenID);
+                if ($object['ObjectIdent'] == 'SMOKE_DETECTOR_ALARM_STATUS') {
+                    // Check for variable
+                    if ($object['ObjectType'] == 2) {
+                        $name = strstr(@IPS_GetName($instanceID), ':', true);
+                        if ($name == false) {
+                            $name = @IPS_GetName($instanceID);
+                        }
+                        $type = IPS_GetVariable($childrenID)['VariableType'];
+                        $triggerValue = 'true';
+                        if ($type == 1) {
+                            $triggerValue = '1';
+                        }
+                        array_push($variables, [
+                            'Use'          => true,
+                            'Name'         => $name,
+                            'ID'           => $childrenID,
+                            'TriggerValue' => $triggerValue]);
+                    }
+                }
+            }
+        }
+        // Get already listed variables
+        $listedVariables = json_decode($this->ReadPropertyString('SmokeDetectors'), true);
+        // Add new variables
+        if (!empty($listedVariables)) {
+            $addVariables = array_diff(array_column($variables, 'ID'), array_column($listedVariables, 'ID'));
+            foreach ($addVariables as $addVariable) {
+                $name = strstr(@IPS_GetName(@IPS_GetParent($addVariable)), ':', true);
+                $type = IPS_GetVariable($addVariable)['VariableType'];
+                $triggerValue = 'true';
+                if ($type == 1) {
+                    $triggerValue = '1';
+                }
+                array_push($listedVariables, [
+                    'Use'          => true,
+                    'Name'         => $name,
+                    'ID'           => $addVariable,
+                    'TriggerValue' => $triggerValue]);
+            }
+        } else {
+            $listedVariables = $variables;
+        }
+        // Sort variables by name
+        array_multisort(array_column($listedVariables, 'Name'), SORT_ASC, $listedVariables);
+        $listedVariables = array_values($listedVariables);
+        // Update variable list
+        $value = json_encode($listedVariables);
+        @IPS_SetProperty($this->InstanceID, 'SmokeDetectors', $value);
+        if (@IPS_HasChanges($this->InstanceID)) {
+            @IPS_ApplyChanges($this->InstanceID);
+        }
+        echo 'Rauchmelder wurden automatisch ermittelt!';
+    }
+
     public function UpdateState(): void
     {
         if ($this->CheckMaintenanceMode()) {
             return;
         }
-        $smokeDetectors = json_decode($this->ReadPropertyString('SmokeDetectors'));
+        if (!$this->GetValue('SmokeDetection')) {
+            return;
+        }
+        $smokeDetectors = json_decode($this->ReadPropertyString('SmokeDetectors'), true);
         if (empty($smokeDetectors)) {
             return;
         }
+        // Sort variables by name
+        array_multisort(array_column($smokeDetectors, 'Name'), SORT_ASC, $smokeDetectors);
         $state = false;
         $sensorStateList = [];
         $timestamp = (string) date('d.m.Y, H:i:s');
         $string = "<table style='width: 100%; border-collapse: collapse;'>";
         $string .= '<tr><td><b>Status</b></td><td><b>Name</b></td><td><b>Letzte Statusprüfung</b></td></tr>';
         foreach ($smokeDetectors as $smokeDetector) {
-            if (!$smokeDetector->Use) {
+            if (!$smokeDetector['Use']) {
                 continue;
             }
-            $id = $smokeDetector->ID;
+            $id = $smokeDetector['ID'];
             if ($id == 0 || @!IPS_ObjectExists($id)) {
                 continue;
             }
             $unicode = json_decode('"\u2705"'); # white_check_mark
             $actualValue = boolval(GetValue($id));
-            $triggerValue = $smokeDetector->TriggerValue;
+            $triggerValue = $smokeDetector['TriggerValue'];
             switch ($triggerValue) {
                 case '0':
                 case 'false':
@@ -57,10 +124,10 @@ trait RM_smokeDetector
                 $unicode = json_decode('"\ud83d\udd25"'); # flame
                 $state = true;
             }
-            $string .= '<tr><td>' . $unicode . '</td><td>' . $smokeDetector->Name . '</td><td>' . $timestamp . '</td></tr>';
+            $string .= '<tr><td>' . $unicode . '</td><td>' . $smokeDetector['Name'] . '</td><td>' . $timestamp . '</td></tr>';
             array_push($sensorStateList, [
                 'unicode'   => $unicode,
-                'name'      => $smokeDetector->Name,
+                'name'      => $smokeDetector['Name'],
                 'timestamp' => $timestamp]);
         }
         $string .= '</table>';
@@ -75,6 +142,9 @@ trait RM_smokeDetector
     public function CheckTriggerVariable(int $SenderID, bool $ValueChanged): void
     {
         if ($this->CheckMaintenanceMode()) {
+            return;
+        }
+        if (!$this->GetValue('SmokeDetection')) {
             return;
         }
         $smokeDetectors = json_decode($this->ReadPropertyString('SmokeDetectors'), true);

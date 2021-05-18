@@ -15,13 +15,18 @@
         },
         {
           "type": "CheckBox",
+          "name": "EnableSmokeDetection",
+          "caption": "Rauchmelder (Aus/An)"
+        },
+        {
+          "type": "CheckBox",
           "name": "EnableLocationDesignation",
           "caption": "Standort"
         },
         {
           "type": "CheckBox",
           "name": "EnableSensorList",
-          "caption": "Rauchmelder"
+          "caption": "Rauchmelder (Liste)"
         },
         {
           "type": "CheckBox",
@@ -288,6 +293,26 @@
           "type": "Button",
           "caption": "Tagesbericht versenden",
           "onClick": "RM_SendDailyNotification($id); echo 'Die Benachrichtigungen wurden versendet!';"
+        }
+      ]
+    },
+    {
+      "type": "ExpansionPanel",
+      "caption": "Rauchmelder",
+      "items": [
+        {
+          "type": "PopupButton",
+          "caption": "Automatisch ermitteln",
+          "popup": {
+            "caption": "Rauchmelder wirklich automatisch ermitteln?",
+            "items": [
+              {
+                "type": "Button",
+                "caption": "Homematic IP",
+                "onClick": "RM_DetermineSmokeDetectors($id);"
+              }
+            ]
+          }
         }
       ]
     }
